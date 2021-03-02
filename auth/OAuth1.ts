@@ -7,9 +7,9 @@ interface OAuth1Config {
     clientSecret: string
 }
 
-interface AccessTokenArgs {
-    oauth_token: string,
-    oauth_token_verifier: string
+interface RequestTokenResponse {
+    request_token: string,
+    request_token_verifier: string
 }
 
 const OAUTH_VERSION = '1.0';
@@ -23,6 +23,10 @@ class OAuth1 {
 
     constructor(config: OAuth1Config) {
         this.config = config;
+    }
+
+    buildAuthorizationUrl({ request_token, request_token_verifier }: RequestTokenResponse) {
+        return `${this.config.authorizationUrl}?oauth_token=${request_token}&oauth_token_verifier=${request_token_verifier}`;
     }
 
     fetchRequestToken() {
@@ -54,7 +58,7 @@ class OAuth1 {
         });
     }
 
-    fetchAccessToken({ oauth_token, oauth_token_verifier }: AccessTokenArgs) {
+    fetchAccessToken({ request_token, request_token_verifier }: RequestTokenResponse) {
         const timestamp = Math.floor((new Date()).getTime() / 1000);
         const method = 'POST',
             url = this.config.accessTokenUrl,
@@ -64,8 +68,8 @@ class OAuth1 {
                 oauth_timestamp : timestamp,
                 oauth_signature_method : OAUTH_SIGNATURE_METHOD,
                 oauth_version : OAUTH_VERSION,
-                oauth_token: oauth_token,
-                oauth_verifier: oauth_token_verifier
+                oauth_token: request_token,
+                oauth_verifier: request_token_verifier
             };
 
         const encodedSignature = oauthSignature.generate(method, url, parameters, this.config.clientSecret);
