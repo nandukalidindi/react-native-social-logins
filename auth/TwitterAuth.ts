@@ -1,4 +1,4 @@
-import { OAuth1, OAuthThreeLeggedFlow } from './OAuth1';
+import { OAuth1, OAuth1ThreeLeggedFlow } from './OAuth1';
 import { OAuth1Config, RequestTokenParams, AccessTokenParams } from './interfaces';
 
 const OAUTH_VERSION = '1.0';
@@ -7,7 +7,7 @@ const OAUTH_SIGNATURE_METHOD = 'HMAC-SHA1';
 import oauthSignature from 'oauth-signature';
 import { objectToQueryString, queryStringToObject } from '../utils/auth';
 
-export default class TwitterAuth extends OAuth1 implements OAuthThreeLeggedFlow  {
+export default class TwitterAuth extends OAuth1 implements OAuth1ThreeLeggedFlow  {
 
     getAuthorizationUrl({ request_token, request_token_verifier }: RequestTokenParams) {
         return `${this.config.authorizationUrl}?oauth_token=${request_token}`;

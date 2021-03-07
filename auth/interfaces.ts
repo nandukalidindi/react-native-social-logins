@@ -7,6 +7,14 @@ export interface OAuth1Config {
     clientSecret: string
 }
 
+export interface OAuth2Config {
+    authorizationUrl: string,
+    accessTokenUrl: string,    
+    redirectUri: string,
+    clientId: string,
+    clientSecret: string
+}
+
 export interface RequestTokenParams {
     request_token: string,
     request_token_verifier?: string

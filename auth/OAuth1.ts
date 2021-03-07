@@ -1,9 +1,9 @@
 import { OAuth1Config, RequestTokenParams, AccessTokenParams } from './interfaces';
 
-interface OAuthThreeLeggedFlow {
-    getAuthorizationUrl({ request_token, request_token_verifier }: RequestTokenParams): string
-
+interface OAuth1ThreeLeggedFlow {
     getRequestToken(): Promise<any>
+
+    getAuthorizationUrl({ request_token, request_token_verifier }: RequestTokenParams): string    
 
     getAccessToken({ request_token, request_token_verifier }: RequestTokenParams): Promise<any>
 
@@ -22,4 +22,4 @@ class OAuth1 {
     }
 }
 
-export { OAuth1, OAuthThreeLeggedFlow }
+export { OAuth1, OAuth1ThreeLeggedFlow }
