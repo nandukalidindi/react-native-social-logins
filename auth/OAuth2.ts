@@ -17,7 +17,7 @@ const OAUTH_SIGNATURE_METHOD = 'HMAC-SHA1';
 
 import { objectToQueryString, queryStringToObject } from '../utils/auth';
 
-class OAuth2 {
+export default class OAuth2 {
     config: OAuth2Config
 
     constructor(config: OAuth2Config) {
