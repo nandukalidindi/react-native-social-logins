@@ -2,61 +2,56 @@ import * as React from 'react'
 import { View, StyleSheet, Modal, TouchableOpacity, Image, Text } from 'react-native';
 
 import { WebView } from 'react-native-webview';
-import TwitterAuth from './auth/TwitterAuth';
+import LinkedinAuth from './auth/LinkedinAuth';
 
-import {TWITTER_CLIENTID, TWITTER_CLIENTSECRET} from "@env"
+import {LINKEDIN_CLIENTID, LINKEDIN_CLIENTSECRET} from "@env"
 
-export default function TwitterLogin(props: any): JSX.Element {
+export default function LinkedinLogin(props: any): JSX.Element {
 
   let timeoutId: number = -1;
 
   const [ state, setState ] = React.useState({ visible: false, url: "" });
 
-  const onButtonClick = (event: any) => {        
-      OAuth1Consumer
-        .getRequestToken()
-          .then(response => {
-            const authorizationUrl = OAuth1Consumer.getAuthorizationUrl({ request_token: response.oauth_token })
-            
-            setState({ visible: true, url: authorizationUrl });
-          });
+  const onButtonClick = (event: any) => {    
+      setState({ visible: true, url: OAuth2Consumer.getAuthorizationUrl() });
   }
 
   const onNavigationStateChange = ({ url }: any) => {
-    clearTimeout(timeoutId);
+    if(url.includes(OAuth2Consumer.config.redirectUri)) {
 
-    timeoutId = window.setTimeout(() => {
-      
-      if(url.includes(OAuth1Consumer.config.redirectUri)) {
-        const tokenParams = OAuth1Consumer.getRequestTokenParams(url);
+        console.log("ASLKDJASD");
+    const code = OAuth2Consumer.getAuthorizationCode(url);
 
-        OAuth1Consumer.getAccessToken(tokenParams)
-          .then(response => {
-            const accessTokenParams = OAuth1Consumer.getAccessTokenParams(response);
+    console.log("CODE IS", code);
 
-            OAuth1Consumer.getUserDetails(accessTokenParams)
-              .then(response => {
-                console.log(response);
-              })
-          })
-      }
-      
-    }, 1000)
+    OAuth2Consumer.getAccessToken(code)
+        .then(response => {
+            const { access_token, expires_in } = response;
+
+            if(!access_token) return;
+
+            setState({ visible: false, url: '' });
+
+            OAuth2Consumer.getUserDetails(access_token)
+                .then(response => {
+                    console.log(response);
+                });
+        })
+    }
   }
 
-  const OAuth1Consumer = new TwitterAuth({
-      clientId: TWITTER_CLIENTID,
-      clientSecret: TWITTER_CLIENTSECRET,
-      requestTokenUrl: 'https://api.twitter.com/oauth/request_token/',
-      authorizationUrl: 'https://api.twitter.com/oauth/authorize/',
-      accessTokenUrl: 'https://api.twitter.com/oauth/access_token',
-      redirectUri: 'https://alive-nyu.firebaseapp.com/__/auth/handler'
+  const OAuth2Consumer = new LinkedinAuth({
+      clientId: LINKEDIN_CLIENTID,
+      clientSecret: LINKEDIN_CLIENTSECRET,
+      authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
+      accessTokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
+      redirectUri: 'https://alive.xprss.org/linkedin'
   });    
   
   return (
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <TouchableOpacity onPress={onButtonClick}>
-          <Image source={require('./assets/twitter-signin.png')}/>
+          <Image source={require('./assets/linkedin-signin.png')}/>
         </TouchableOpacity>
         <Modal
           transparent
@@ -67,7 +62,7 @@ export default function TwitterLogin(props: any): JSX.Element {
               <WebView 
                 source={{ uri: state.url }} 
                 style={{flex: 1}} 
-                javaScriptEnabled={false}
+                javaScriptEnabled={true}
                 startInLoadingState
                 onNavigationStateChange={onNavigationStateChange}
               />
