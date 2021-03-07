@@ -2,7 +2,7 @@ import * as React from 'react'
 import { View, StyleSheet, Modal, TouchableOpacity, Image, Text } from 'react-native';
 
 import { WebView } from 'react-native-webview';
-import { OAuth1 } from './auth';
+import TwitterAuth from './auth/TwitterAuth';
 
 import {TWITTER_CLIENTID, TWITTER_CLIENTSECRET} from "@env"
 
@@ -14,9 +14,9 @@ export default function TwitterLogin(props: any): JSX.Element {
 
   const onButtonClick = (event: any) => {        
       OAuth1Consumer
-        .fetchRequestToken()
+        .getRequestToken()
           .then(response => {
-            const authorizationUrl = OAuth1Consumer.buildAuthorizationUrl({ request_token: response.oauth_token })
+            const authorizationUrl = OAuth1Consumer.getAuthorizationUrl({ request_token: response.oauth_token })
             
             setState({ visible: true, url: authorizationUrl });
           });
@@ -28,13 +28,13 @@ export default function TwitterLogin(props: any): JSX.Element {
     timeoutId = window.setTimeout(() => {
       
       if(url.includes(OAuth1Consumer.config.redirectUri)) {
-        const tokenParams = OAuth1Consumer.buildRequestTokenParams(url);
+        const tokenParams = OAuth1Consumer.getRequestTokenParams(url);
 
-        OAuth1Consumer.fetchAccessToken(tokenParams)
+        OAuth1Consumer.getAccessToken(tokenParams)
           .then(response => {
-            const accessTokenParams = OAuth1Consumer.buildAccessTokenParams(response);
+            const accessTokenParams = OAuth1Consumer.getAccessTokenParams(response);
 
-            OAuth1Consumer.fetchUserDetails(accessTokenParams)
+            OAuth1Consumer.getUserDetails(accessTokenParams)
               .then(response => {
                 console.log(response);
               })
@@ -44,7 +44,7 @@ export default function TwitterLogin(props: any): JSX.Element {
     }, 1000)
   }
 
-  const OAuth1Consumer = new OAuth1({
+  const OAuth1Consumer = new TwitterAuth({
       clientId: TWITTER_CLIENTID,
       clientSecret: TWITTER_CLIENTSECRET,
       requestTokenUrl: 'https://api.twitter.com/oauth/request_token/',
