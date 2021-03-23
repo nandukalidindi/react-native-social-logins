@@ -6,12 +6,14 @@ import { WebView } from 'react-native-webview';
 import { OAuth1 } from './auth';
 import TwitterLogin from './TwitterLogin';
 import LinkedinLogin from './LinkedinLogin';
+import GoogleLogin from './GoogleLogin';
 
 export default function App() {
   return (
     <View style={{flex: 1}}>
       <TwitterLogin />
       <LinkedinLogin />
+      <GoogleLogin />
     </View>
   );
 }
