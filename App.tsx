@@ -7,6 +7,7 @@ import { OAuth1 } from './auth';
 import TwitterLogin from './TwitterLogin';
 import LinkedinLogin from './LinkedinLogin';
 import GoogleLogin from './GoogleLogin';
+import FacebookLogin from './FacebookLogin';
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       <TwitterLogin />
       <LinkedinLogin />
       <GoogleLogin />
+      <FacebookLogin />
     </View>
   );
 }
