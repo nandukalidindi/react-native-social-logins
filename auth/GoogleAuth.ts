@@ -37,9 +37,6 @@ export default class GoogleAuth extends OAuth2 implements OAuth2ThreeLeggedFlow 
 
     const queryParamString = redirect_uri.split("?").pop() || "";
 
-    console.log(queryParamString);
-    console.log(queryStringToObject(queryParamString));
-
     const { code, state } = queryStringToObject(queryParamString);
 
     return code;
@@ -64,9 +61,6 @@ export default class GoogleAuth extends OAuth2 implements OAuth2ThreeLeggedFlow 
   }
 
   getUserDetails(access_token: string) {
-    console.log('access TOKEN');
-    console.log(access_token);
-
     const USER_INFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json';
 
     return fetchResponse(USER_INFO_URL, access_token);
