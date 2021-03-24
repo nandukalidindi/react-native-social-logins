@@ -16,7 +16,7 @@ export default function FacebookLogin(props: any): JSX.Element {
     setState({ visible: true, url: OAuth2Consumer.getAuthorizationUrl() });
   }
 
-  const onNavigationStateChange = ({ url }: any) => {    
+  const onNavigationStateChange = ({ url }: any) => {
     if (url.startsWith(OAuth2Consumer.config.redirectUri)) {
 
       const code = OAuth2Consumer.getAuthorizationCode(url);
