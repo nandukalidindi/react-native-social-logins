@@ -6,21 +6,21 @@ const OAUTH_SIGNATURE_METHOD = 'HMAC-SHA1';
 import { objectToQueryString, queryStringToObject } from '../utils/auth';
 
 interface OAuth2ThreeLeggedFlow {
-    getAuthorizationUrl(): string
+  getAuthorizationUrl(): string
 
-    getAuthorizationCode(redirect_uri: string): string
-    
-    getAccessToken(request_token: string): Promise<any>
+  getAuthorizationCode(redirect_uri: string): string
 
-    getUserDetails(access_token: string): Promise<any>
+  getAccessToken(request_token: string): Promise<any>
+
+  getUserDetails(access_token: string): Promise<any>
 }
 
 class OAuth2 {
-    config: OAuth2Config
+  config: OAuth2Config
 
-    constructor(config: OAuth2Config) {
-        this.config = config;
-    }    
+  constructor(config: OAuth2Config) {
+    this.config = config;
+  }
 }
 
 export { OAuth2, OAuth2ThreeLeggedFlow };

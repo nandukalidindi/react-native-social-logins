@@ -4,7 +4,7 @@ import { View, StyleSheet, Modal, TouchableOpacity, Image, Text } from 'react-na
 import { WebView } from 'react-native-webview';
 import GoogleAuth from './auth/GoogleAuth';
 
-import { GOOGLE_CLIENTID, GOOGLE_CLIENTSECRET } from "@env"
+import { GOOGLE_CLIENTID, GOOGLE_CLIENTSECRET, GOOGLE_CALLBACK_URI } from "@env"
 
 export default function GoogleLogin(props: any): JSX.Element {
 
@@ -42,7 +42,7 @@ export default function GoogleLogin(props: any): JSX.Element {
     clientSecret: GOOGLE_CLIENTSECRET,
     authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
     accessTokenUrl: 'https://oauth2.googleapis.com/token',
-    redirectUri: 'https://alive.xprss.org/google'
+    redirectUri: GOOGLE_CALLBACK_URI
   });
 
   return (
