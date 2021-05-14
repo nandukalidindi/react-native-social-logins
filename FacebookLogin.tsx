@@ -4,7 +4,7 @@ import { View, StyleSheet, Modal, TouchableOpacity, Image, Text } from 'react-na
 import { WebView } from 'react-native-webview';
 import FacebookAuth from './auth/FacebookAuth';
 
-import { FACEBOOK_CLIENTID, FACEBOOK_CLIENTSECRET } from "@env"
+import { FACEBOOK_CLIENTID, FACEBOOK_CLIENTSECRET, FACEBOOK_CALLBACK_URI } from "@env"
 
 export default function FacebookLogin(props: any): JSX.Element {
 
@@ -42,7 +42,7 @@ export default function FacebookLogin(props: any): JSX.Element {
     clientSecret: FACEBOOK_CLIENTSECRET,
     authorizationUrl: 'https://www.facebook.com/v10.0/dialog/oauth',
     accessTokenUrl: 'https://graph.facebook.com/v10.0/oauth/access_token',
-    redirectUri: 'https://www.alive.xprss.org/facebook'
+    redirectUri: FACEBOOK_CALLBACK_URI
   });
 
   return (

@@ -4,7 +4,7 @@ import { View, StyleSheet, Modal, TouchableOpacity, Image, Text } from 'react-na
 import { WebView } from 'react-native-webview';
 import LinkedinAuth from './auth/LinkedinAuth';
 
-import { LINKEDIN_CLIENTID, LINKEDIN_CLIENTSECRET } from "@env"
+import { LINKEDIN_CLIENTID, LINKEDIN_CLIENTSECRET, LINKEDIN_REDIRECT_URI } from "@env"
 
 export default function LinkedinLogin(props: any): JSX.Element {
 
@@ -42,7 +42,7 @@ export default function LinkedinLogin(props: any): JSX.Element {
     clientSecret: LINKEDIN_CLIENTSECRET,
     authorizationUrl: 'https://www.linkedin.com/oauth/v2/authorization',
     accessTokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
-    redirectUri: 'https://alive.xprss.org/linkedin'
+    redirectUri: LINKEDIN_REDIRECT_URI
   });
 
   return (

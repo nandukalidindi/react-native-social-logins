@@ -4,7 +4,7 @@ import { View, StyleSheet, Modal, TouchableOpacity, Image, Text } from 'react-na
 import { WebView } from 'react-native-webview';
 import TwitterAuth from './auth/TwitterAuth';
 
-import { TWITTER_CLIENTID, TWITTER_CLIENTSECRET } from "@env"
+import { TWITTER_CLIENTID, TWITTER_CLIENTSECRET, TWITTER_REDIRECT_URI } from "@env"
 
 export default function TwitterLogin(props: any): JSX.Element {
 
@@ -50,7 +50,7 @@ export default function TwitterLogin(props: any): JSX.Element {
     requestTokenUrl: 'https://api.twitter.com/oauth/request_token/',
     authorizationUrl: 'https://api.twitter.com/oauth/authorize/',
     accessTokenUrl: 'https://api.twitter.com/oauth/access_token',
-    redirectUri: 'https://alive-nyu.firebaseapp.com/__/auth/handler'
+    redirectUri: TWITTER_REDIRECT_URI
   });
 
   return (
