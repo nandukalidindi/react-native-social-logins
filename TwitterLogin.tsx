@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { View, StyleSheet, Modal, TouchableOpacity, Image, Text } from 'react-native';
 
+import { AntDesign } from '@expo/vector-icons';
+
 import { WebView } from 'react-native-webview';
 import TwitterAuth from './auth/TwitterAuth';
 
@@ -56,7 +58,7 @@ export default function TwitterLogin(props: any): JSX.Element {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TouchableOpacity onPress={onButtonClick}>
-        <Image source={require('./assets/twitter-signin.png')} />
+        <AntDesign name="twitter" size={30} color="black" />
       </TouchableOpacity>
       <Modal
         transparent
