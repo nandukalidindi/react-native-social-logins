@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { View, StyleSheet, Modal, TouchableOpacity, Image, Text } from 'react-native';
 
+import { AntDesign } from '@expo/vector-icons';
+
 import { WebView } from 'react-native-webview';
 import GoogleAuth from './auth/GoogleAuth';
 
@@ -48,7 +50,7 @@ export default function GoogleLogin(props: any): JSX.Element {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TouchableOpacity onPress={onButtonClick}>
-        <Image source={require('./assets/google-signin.png')} />
+        <AntDesign name="google" size={30} color="black" />
       </TouchableOpacity>
       <Modal
         transparent

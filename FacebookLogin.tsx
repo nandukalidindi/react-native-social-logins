@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { View, StyleSheet, Modal, TouchableOpacity, Image, Text } from 'react-native';
 
+import { AntDesign } from '@expo/vector-icons';
+
 import { WebView } from 'react-native-webview';
 import FacebookAuth from './auth/FacebookAuth';
 
@@ -48,7 +50,7 @@ export default function FacebookLogin(props: any): JSX.Element {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TouchableOpacity onPress={onButtonClick}>
-        <Image source={require('./assets/facebook-signin.png')} />
+        <AntDesign name="facebook-square" size={30} color="black" />
       </TouchableOpacity>
       <Modal
         transparent
