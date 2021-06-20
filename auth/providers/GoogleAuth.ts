@@ -1,9 +1,9 @@
-import { OAuth2, OAuth2ThreeLeggedFlow } from './OAuth2';
+import { OAuth2, OAuth2ThreeLeggedFlow } from '../OAuth2';
 
 const OAUTH_VERSION = '2.0';
 const OAUTH_SIGNATURE_METHOD = 'HMAC-SHA1';
 
-import { objectToQueryString, queryStringToObject } from '../utils/auth';
+import { objectToQueryString, queryStringToObject } from '../../utils/auth';
 
 const fetchResponse = (url: string, token: string): Promise<any> => {
   return fetch(url, {
@@ -14,20 +14,23 @@ const fetchResponse = (url: string, token: string): Promise<any> => {
   }).then(response => response.json());
 }
 
-export default class LinkedinAuth extends OAuth2 implements OAuth2ThreeLeggedFlow {
+export default class GoogleAuth extends OAuth2 implements OAuth2ThreeLeggedFlow {
   getAuthorizationUrl() {
     const timestamp = Math.floor((new Date()).getTime() / 1000);
-    const scope = ['r_emailaddress', 'r_liteprofile', 'w_member_social'].join("%20");
 
-    const params = {
-      response_type: 'code',
+    const queryParams = {
       client_id: this.config.clientId,
       redirect_uri: this.config.redirectUri,
-      state: timestamp,
-      scope
-    };
+      response_type: 'code',
+      // scope: 'https://www.googleapis.com/auth/drive.metadata.readonly',
+      // scope: 'https://www.googleapis.com/auth/userinfo.profile',
+      scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+      access_type: 'online',
+      state: timestamp.toString(),
+      prompt: 'consent'
+    }
 
-    return `${this.config.authorizationUrl}?${objectToQueryString(params, '&')}`;
+    return `${this.config.authorizationUrl}?${objectToQueryString(queryParams, '&')}`;
   }
 
   getAuthorizationCode(redirect_uri: string) {
@@ -58,12 +61,8 @@ export default class LinkedinAuth extends OAuth2 implements OAuth2ThreeLeggedFlo
   }
 
   getUserDetails(access_token: string) {
-    const USERS_ME_URL = "https://api.linkedin.com/v2/me";
-    const USER_EMAIL_URL = "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))";
+    const USER_INFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json';
 
-    const fetchUsersMe = fetchResponse(USERS_ME_URL, access_token);
-    const fetchUserEmail = fetchResponse(USER_EMAIL_URL, access_token);
-
-    return Promise.all([fetchUsersMe, fetchUserEmail])
+    return fetchResponse(USER_INFO_URL, access_token);
   }
 }

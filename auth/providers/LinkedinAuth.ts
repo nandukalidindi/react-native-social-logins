@@ -1,11 +1,9 @@
-// FACEBOOK LOGIN FLOW https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/
-
-import { OAuth2, OAuth2ThreeLeggedFlow } from './OAuth2';
+import { OAuth2, OAuth2ThreeLeggedFlow } from '../OAuth2';
 
 const OAUTH_VERSION = '2.0';
 const OAUTH_SIGNATURE_METHOD = 'HMAC-SHA1';
 
-import { objectToQueryString, queryStringToObject } from '../utils/auth';
+import { objectToQueryString, queryStringToObject } from '../../utils/auth';
 
 const fetchResponse = (url: string, token: string): Promise<any> => {
   return fetch(url, {
@@ -16,19 +14,20 @@ const fetchResponse = (url: string, token: string): Promise<any> => {
   }).then(response => response.json());
 }
 
-export default class FacebookAuth extends OAuth2 implements OAuth2ThreeLeggedFlow {
+export default class LinkedinAuth extends OAuth2 implements OAuth2ThreeLeggedFlow {
   getAuthorizationUrl() {
     const timestamp = Math.floor((new Date()).getTime() / 1000);
+    const scope = ['r_emailaddress', 'r_liteprofile', 'w_member_social'].join("%20");
 
-    const queryParams = {
+    const params = {
+      response_type: 'code',
       client_id: this.config.clientId,
       redirect_uri: this.config.redirectUri,
-      auth_type: 'reauthenticate',
-      auth_nonce: timestamp.toString(),
-      state: timestamp.toString()
-    }
+      state: timestamp,
+      scope
+    };
 
-    return `${this.config.authorizationUrl}?${objectToQueryString(queryParams, '&')}`;
+    return `${this.config.authorizationUrl}?${objectToQueryString(params, '&')}`;
   }
 
   getAuthorizationCode(redirect_uri: string) {
@@ -41,11 +40,13 @@ export default class FacebookAuth extends OAuth2 implements OAuth2ThreeLeggedFlo
   }
 
   getAccessToken(request_token: string) {
+
     const params = {
-      client_id: this.config.clientId,
+      grant_type: 'authorization_code',
+      code: request_token,
       redirect_uri: this.config.redirectUri,
-      client_secret: this.config.clientSecret,
-      code: request_token
+      client_id: this.config.clientId,
+      client_secret: this.config.clientSecret
     }
 
     return fetch(this.config.accessTokenUrl, {
@@ -57,8 +58,12 @@ export default class FacebookAuth extends OAuth2 implements OAuth2ThreeLeggedFlo
   }
 
   getUserDetails(access_token: string) {
-    const USER_INFO_URL = `https://graph.facebook.com/me?access_token=${access_token}&fields=email,first_name,last_name`;
+    const USERS_ME_URL = "https://api.linkedin.com/v2/me";
+    const USER_EMAIL_URL = "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))";
 
-    return fetchResponse(USER_INFO_URL, access_token);
+    const fetchUsersMe = fetchResponse(USERS_ME_URL, access_token);
+    const fetchUserEmail = fetchResponse(USER_EMAIL_URL, access_token);
+
+    return Promise.all([fetchUsersMe, fetchUserEmail])
   }
 }

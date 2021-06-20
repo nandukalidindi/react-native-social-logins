@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AntDesign } from '@expo/vector-icons';
 
-import TwitterAuth from './auth/TwitterAuth';
-import GoogleAuth from './auth/GoogleAuth';
-import LinkedinAuth from './auth/LinkedinAuth';
-import FacebookAuth from './auth/FacebookAuth';
+import TwitterAuth from './auth/providers/TwitterAuth';
+import GoogleAuth from './auth/providers/GoogleAuth';
+import LinkedinAuth from './auth/providers/LinkedinAuth';
+import FacebookAuth from './auth/providers/FacebookAuth';
 
 import { 
   TWITTER_CLIENTID, TWITTER_CLIENTSECRET, TWITTER_CALLBACK_URI,
@@ -74,12 +74,3 @@ export default function App() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

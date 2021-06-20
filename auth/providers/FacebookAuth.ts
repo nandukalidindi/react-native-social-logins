@@ -1,9 +1,11 @@
-import { OAuth2, OAuth2ThreeLeggedFlow } from './OAuth2';
+// FACEBOOK LOGIN FLOW https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/
+
+import { OAuth2, OAuth2ThreeLeggedFlow } from '../OAuth2';
 
 const OAUTH_VERSION = '2.0';
 const OAUTH_SIGNATURE_METHOD = 'HMAC-SHA1';
 
-import { objectToQueryString, queryStringToObject } from '../utils/auth';
+import { objectToQueryString, queryStringToObject } from '../../utils/auth';
 
 const fetchResponse = (url: string, token: string): Promise<any> => {
   return fetch(url, {
@@ -14,20 +16,16 @@ const fetchResponse = (url: string, token: string): Promise<any> => {
   }).then(response => response.json());
 }
 
-export default class GoogleAuth extends OAuth2 implements OAuth2ThreeLeggedFlow {
+export default class FacebookAuth extends OAuth2 implements OAuth2ThreeLeggedFlow {
   getAuthorizationUrl() {
     const timestamp = Math.floor((new Date()).getTime() / 1000);
 
     const queryParams = {
       client_id: this.config.clientId,
       redirect_uri: this.config.redirectUri,
-      response_type: 'code',
-      // scope: 'https://www.googleapis.com/auth/drive.metadata.readonly',
-      // scope: 'https://www.googleapis.com/auth/userinfo.profile',
-      scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
-      access_type: 'online',
-      state: timestamp.toString(),
-      prompt: 'consent'
+      auth_type: 'reauthenticate',
+      auth_nonce: timestamp.toString(),
+      state: timestamp.toString()
     }
 
     return `${this.config.authorizationUrl}?${objectToQueryString(queryParams, '&')}`;
@@ -43,13 +41,11 @@ export default class GoogleAuth extends OAuth2 implements OAuth2ThreeLeggedFlow 
   }
 
   getAccessToken(request_token: string) {
-
     const params = {
-      grant_type: 'authorization_code',
-      code: request_token,
-      redirect_uri: this.config.redirectUri,
       client_id: this.config.clientId,
-      client_secret: this.config.clientSecret
+      redirect_uri: this.config.redirectUri,
+      client_secret: this.config.clientSecret,
+      code: request_token
     }
 
     return fetch(this.config.accessTokenUrl, {
@@ -61,7 +57,7 @@ export default class GoogleAuth extends OAuth2 implements OAuth2ThreeLeggedFlow 
   }
 
   getUserDetails(access_token: string) {
-    const USER_INFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json';
+    const USER_INFO_URL = `https://graph.facebook.com/me?access_token=${access_token}&fields=email,first_name,last_name`;
 
     return fetchResponse(USER_INFO_URL, access_token);
   }
