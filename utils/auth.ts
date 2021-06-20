@@ -8,5 +8,5 @@ export const queryStringToObject = (queryString: string, separator = '&'): any =
 
     acc[key] = value;
     return acc;
-  }, {});
+  }, {} as any);
 }

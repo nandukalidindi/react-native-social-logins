@@ -1,56 +1,54 @@
 import * as React from 'react'
 import { View, StyleSheet, Modal, TouchableOpacity, Image, Text } from 'react-native';
 
-import { AntDesign } from '@expo/vector-icons';
-
 import { WebView } from 'react-native-webview';
-import GoogleAuth from './auth/GoogleAuth';
 
-import { GOOGLE_CLIENTID, GOOGLE_CLIENTSECRET, GOOGLE_CALLBACK_URI } from "@env"
-
-export default function GoogleLogin(props: any): JSX.Element {
+export default function OAuth1Login(props: any): JSX.Element {
 
   let timeoutId: number = -1;
 
-  const [state, setState] = React.useState({ visible: false, url: "" });
+  const [state, setState] = React.useState({ visible: false, url: '' });
 
   const onButtonClick = (event: any) => {
-    setState({ visible: true, url: OAuth2Consumer.getAuthorizationUrl() });
+    OAuth1Consumer
+      .getRequestToken()
+      .then((response: any) => {
+        const authorizationUrl = OAuth1Consumer.getAuthorizationUrl({ request_token: response.oauth_token })
+
+        setState({ visible: true, url: authorizationUrl });
+      });
   }
 
   const onNavigationStateChange = ({ url }: any) => {
-    if (url.startsWith(OAuth2Consumer.config.redirectUri)) {
+    clearTimeout(timeoutId);
 
-      const code = OAuth2Consumer.getAuthorizationCode(url);
+    timeoutId = window.setTimeout(() => {
 
-      OAuth2Consumer.getAccessToken(decodeURIComponent(code))
-        .then(response => {
-          const { access_token, expires_in } = response;
+      if (url.includes(OAuth1Consumer.config.redirectUri)) {
+        const tokenParams = OAuth1Consumer.getRequestTokenParams(url);
 
-          if (!access_token) return;
+        OAuth1Consumer.getAccessToken(tokenParams)
+          .then((response: any) => {
+            const accessTokenParams = OAuth1Consumer.getAccessTokenParams(response);
 
-          setState({ visible: false, url: '' });
+            setState({ visible: false, url: '' });
 
-          OAuth2Consumer.getUserDetails(access_token)
-            .then(response => {
-              console.log(response);
-            });
-        })
-    }
+            OAuth1Consumer.getUserDetails(accessTokenParams)
+              .then((response: any) => {
+                console.log(response);
+              })
+          })
+      }
+
+    }, 1000)
   }
 
-  const OAuth2Consumer = new GoogleAuth({
-    clientId: GOOGLE_CLIENTID,
-    clientSecret: GOOGLE_CLIENTSECRET,
-    authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-    accessTokenUrl: 'https://oauth2.googleapis.com/token',
-    redirectUri: GOOGLE_CALLBACK_URI
-  });
+  const OAuth1Consumer = props.oauthConsumer
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TouchableOpacity onPress={onButtonClick}>
-        <AntDesign name="google" size={30} color="black" />
+        {props.logo}
       </TouchableOpacity>
       <Modal
         transparent
@@ -61,8 +59,7 @@ export default function GoogleLogin(props: any): JSX.Element {
             <WebView
               source={{ uri: state.url }}
               style={{ flex: 1 }}
-              javaScriptEnabled={true}
-              userAgent="Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"
+              javaScriptEnabled={false}
               startInLoadingState
               onNavigationStateChange={onNavigationStateChange}
             />
