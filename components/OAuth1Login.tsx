@@ -43,7 +43,7 @@ export default function OAuth1Login(props: any): JSX.Element {
     }, 1000)
   }
 
-  const OAuth1Consumer = props.oauthConsumer
+  const OAuth1Consumer = props.oauthConsumer;
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
